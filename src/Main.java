@@ -34,7 +34,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-//import view.Display;
+import view.Display;
 
 
 public class Main extends Configured implements Tool {
@@ -170,8 +170,8 @@ public class Main extends Configured implements Tool {
         try {
             FileSystem fs0 = FileSystem.get(conf);
 
-            fs0.copyToLocalFile(false, new Path("/BTL-KMean/cluster_centers/cluster_centers.txt"), new Path(path_download_cluster_centers));
-            fs0.copyToLocalFile(false, new Path("/BTL-KMean/data_output/data_output.txt"), new Path(path_download_data_output));
+            fs0.copyToLocalFile(false, new Path("/BTL/cluster_centers/cluster_centers.txt"), new Path(path_download_cluster_centers));
+            fs0.copyToLocalFile(false, new Path("/BTL/data_output/data_output.txt"), new Path(path_download_data_output));
                         
             System.out.println("File downloaded result and dataOutput_SUCCESS successfully.");
         } catch (Exception e) {
@@ -179,37 +179,6 @@ public class Main extends Configured implements Tool {
         }
 	}
 	
-	public static void groupClusters(String dataOutputFile) throws IOException{
-		Map<Integer, List<String>> clusters = new HashMap<>();
-		BufferedReader br = new BufferedReader(new FileReader(dataOutputFile));
-		String line;
-		//Đọc từng dòng của file
-		while((line = br.readLine()) != null)
-		{
-			//Tách dòng theo dấu phẩy
-			String[] parts = line.split(",");
-			String point = parts[0] + "," + parts[1]; //Lấy tọa độ
-			int clusterId = Integer.parseInt(parts[2]); //Lấy ID cụm
-			
-			//Gom các điểm theo cụm
-			clusters.computeIfAbsent(clusterId, k -> new ArrayList<>()).add(point);
-		}
-		br.close();
-		
-		//In ra kết quả
-		for (Map.Entry<Integer, List<String>> entry : clusters.entrySet()) {
-			int clusterId = entry.getKey();
-			List<String> points = entry.getValue();
-			
-			//Đếm số điểm trong cụm
-			int numberOfPoints = points.size();
-			
-			System.out.println("Centroid: " + clusterId);
-			System.out.println("Points: " + points);
-			System.out.println("Number of Point: " + numberOfPoints);
-			System.out.println("------------------------");
-		}
-	}
 	public int run(String[] args) throws Exception {
 
 		Configuration conf = getConf();
@@ -241,8 +210,7 @@ public class Main extends Configured implements Tool {
 
 		System.out.println("--------------- STATR ---------------");
 		FileSystem fs = FileSystem.get(conf);
-		fs.delete(new Path("/BTL-KMean/map_reduce"), true); 
-		fs.delete(new Path("/BTL-KMean/cluster_centers"), true); 
+		fs.delete(new Path("/BTL/cluster_centers"), true); 
 		
 		PointWritable[] oldCentroidPoints = initRandomCentroids(nClusters, numLineOfInputFile, inputFilePath, conf);
 		PointWritable[] centroidsInit = copyCentroids(oldCentroidPoints);
@@ -253,7 +221,7 @@ public class Main extends Configured implements Tool {
 		PointWritable[] newCentroidPoints = null;
 		long t1 = (new Date()).getTime();
 		while (true) {
-			fs.delete(new Path("/BTL-KMean/data_output"), true); 
+			fs.delete(new Path("/BTL/data_output"), true); 
 			nLoop++;
 			if (nLoop == MAX_LOOP) {
 				break;
@@ -304,7 +272,6 @@ public class Main extends Configured implements Tool {
 			download_hdfs_local(conf);
 //			String dataOutputFile = path_download_data_output;
 			System.out.println("Calling groupClusters with: " + path_download_data_output);
-			groupClusters(path_download_data_output); // Gọi hàm gom cụm để in kết quả
 		}
 		
 		//In ra gom cụm

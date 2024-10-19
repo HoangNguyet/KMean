@@ -143,5 +143,6 @@
 	<classpathentry kind="lib" path="C:/hadoop-3.3.0/share/hadoop/yarn/hadoop-yarn-server-web-proxy-3.3.0.jar"/>
 	<classpathentry kind="lib" path="C:/hadoop-3.3.0/share/hadoop/yarn/hadoop-yarn-services-api-3.3.0.jar"/>
 	<classpathentry kind="lib" path="C:/hadoop-3.3.0/share/hadoop/yarn/hadoop-yarn-services-core-3.3.0.jar"/>
+	<classpathentry kind="lib" path="D:/university/NamIV/Big/jfreechart-1.0.19/jfreechart-1.0.19/jfreechart-1.0.19-demo.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
